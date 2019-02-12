@@ -1,0 +1,54 @@
+﻿@model ComicCreator.Models.PanelText
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>PanelText</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.OrderNumber)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.OrderNumber)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TextContent)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TextContent)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TailX)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TailX)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TailY)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TailY)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TextClass)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TextClass)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Panel)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Panel.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

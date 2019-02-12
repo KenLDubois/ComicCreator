@@ -4,14 +4,16 @@ using ComicCreator.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComicCreator.Migrations
 {
     [DbContext(typeof(ComicCreatorContext))]
-    partial class ComicCreatorContextModelSnapshot : ModelSnapshot
+    [Migration("20190212154512_Add-Issues")]
+    partial class AddIssues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,12 +36,8 @@ namespace ComicCreator.Migrations
                     b.Property<string>("CoverImageMimeType")
                         .HasMaxLength(256);
 
-                    b.Property<int?>("IssueNumber");
-
                     b.Property<string>("Name")
                         .HasMaxLength(100);
-
-                    b.Property<DateTime?>("ReleaseDate");
 
                     b.Property<int>("TitleId");
 
@@ -48,56 +46,6 @@ namespace ComicCreator.Migrations
                     b.HasIndex("TitleId");
 
                     b.ToTable("Issues");
-                });
-
-            modelBuilder.Entity("ComicCreator.Models.Panel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("IssueId");
-
-                    b.Property<int>("OrderNumber");
-
-                    b.Property<byte[]>("PanelImageContent");
-
-                    b.Property<string>("PanelImageFileName")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("PanelImageMimeType")
-                        .HasMaxLength(256);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IssueId");
-
-                    b.ToTable("Panels");
-                });
-
-            modelBuilder.Entity("ComicCreator.Models.PanelText", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("OrderNumber");
-
-                    b.Property<int>("PanelId");
-
-                    b.Property<double?>("TailX");
-
-                    b.Property<double?>("TailY");
-
-                    b.Property<string>("TextClass");
-
-                    b.Property<string>("TextContent");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PanelId");
-
-                    b.ToTable("PanelTexts");
                 });
 
             modelBuilder.Entity("ComicCreator.Models.Title", b =>
@@ -127,22 +75,6 @@ namespace ComicCreator.Migrations
                     b.HasOne("ComicCreator.Models.Title", "Title")
                         .WithMany("Issues")
                         .HasForeignKey("TitleId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ComicCreator.Models.Panel", b =>
-                {
-                    b.HasOne("ComicCreator.Models.Issue", "Issue")
-                        .WithMany("Panels")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ComicCreator.Models.PanelText", b =>
-                {
-                    b.HasOne("ComicCreator.Models.Panel", "Panel")
-                        .WithMany("PanelTexts")
-                        .HasForeignKey("PanelId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

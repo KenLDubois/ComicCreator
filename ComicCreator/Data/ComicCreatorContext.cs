@@ -14,6 +14,9 @@ namespace ComicCreator.Models
         }
 
         public DbSet<Title> Titles { get; set; }
+        public DbSet<Issue> Issues { get; set; }
+        public DbSet<Panel> Panels { get; set; }
+        public DbSet<PanelText> PanelTexts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -12,22 +12,23 @@ using ComicCreator.Utilities;
 
 namespace ComicCreator.Controllers
 {
-    public class TitlesController : Controller
+    public class IssuesController : Controller
     {
         private readonly ComicCreatorContext _context;
 
-        public TitlesController(ComicCreatorContext context)
+        public IssuesController(ComicCreatorContext context)
         {
             _context = context;
         }
 
-        // GET: Titles
+        // GET: Issues
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Titles.ToListAsync());
+            var comicCreatorContext = _context.Issues.Include(i => i.Title);
+            return View(await comicCreatorContext.ToListAsync());
         }
 
-        // GET: Titles/Details/5
+        // GET: Issues/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,55 +36,58 @@ namespace ComicCreator.Controllers
                 return NotFound();
             }
 
-            var title = await _context.Titles
+            var issue = await _context.Issues
+                .Include(i => i.Title)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (title == null)
+            if (issue == null)
             {
                 return NotFound();
             }
 
-            return View(title);
+            return View(issue);
         }
 
-        // GET: Titles/Create
+        // GET: Issues/Create
         public IActionResult Create()
         {
+            ViewData["TitleId"] = new SelectList(_context.Titles, "Id", "Id");
             return View();
         }
 
-        // POST: Titles/Create
+        // POST: Issues/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Title title, IFormFile titleImage)
+        public async Task<IActionResult> Create([Bind("Id,Name,TitleId")] Issue issue, IFormFile coverImage)
         {
             if (ModelState.IsValid)
             {
-                if(titleImage != null)
+                if(coverImage != null)
                 {
-                    string mimeType = titleImage.ContentType;
-                    long fileLength = titleImage.Length;
+                    string mimeType = coverImage.ContentType;
+                    long fileLength = coverImage.Length;
                     if(!(mimeType == "" || fileLength == 0))
                     {
                         using (var memoryStream = new MemoryStream())
                         {
-                            await titleImage.CopyToAsync(memoryStream);
-                            title.TitleImageContent = ResizeImage.shrinkImagePNG(memoryStream.ToArray(), 150, 150);
+                            await coverImage.CopyToAsync(memoryStream);
+                            issue.CoverImageContent = ResizeImage.shrinkImagePNG(memoryStream.ToArray(), 150, 150);
                         }
-                        title.TitleImageMimeType = mimeType;
-                        title.TitleImageFileName = titleImage.FileName;
+                        issue.CoverImageMimeType = mimeType;
+                        issue.CoverImageFileName = coverImage.FileName;
                     }
                 }
 
-                _context.Add(title);
+                _context.Add(issue);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(title);
+            ViewData["TitleId"] = new SelectList(_context.Titles, "Id", "Id", issue.TitleId);
+            return View(issue);
         }
 
-        // GET: Titles/Edit/5
+        // GET: Issues/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,22 +95,23 @@ namespace ComicCreator.Controllers
                 return NotFound();
             }
 
-            var title = await _context.Titles.FindAsync(id);
-            if (title == null)
+            var issue = await _context.Issues.FindAsync(id);
+            if (issue == null)
             {
                 return NotFound();
             }
-            return View(title);
+            ViewData["TitleId"] = new SelectList(_context.Titles, "Id", "Id", issue.TitleId);
+            return View(issue);
         }
 
-        // POST: Titles/Edit/5
+        // POST: Issues/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Title title, IFormFile titleImage)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,TitleId")] Issue issue)
         {
-            if (id != title.Id)
+            if (id != issue.Id)
             {
                 return NotFound();
             }
@@ -115,28 +120,12 @@ namespace ComicCreator.Controllers
             {
                 try
                 {
-                    if (titleImage != null)
-                    {
-                        string mimeType = titleImage.ContentType;
-                        long fileLength = titleImage.Length;
-                        if (!(mimeType == "" || fileLength == 0))
-                        {
-                            using (var memoryStream = new MemoryStream())
-                            {
-                                await titleImage.CopyToAsync(memoryStream);
-                                title.TitleImageContent = ResizeImage.shrinkImagePNG(memoryStream.ToArray(), 150, 150);
-                            }
-                            title.TitleImageMimeType = mimeType;
-                            title.TitleImageFileName = titleImage.FileName;
-                        }
-                    }        
-
-                    _context.Update(title);
+                    _context.Update(issue);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TitleExists(title.Id))
+                    if (!IssueExists(issue.Id))
                     {
                         return NotFound();
                     }
@@ -147,10 +136,11 @@ namespace ComicCreator.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(title);
+            ViewData["TitleId"] = new SelectList(_context.Titles, "Id", "Id", issue.TitleId);
+            return View(issue);
         }
 
-        // GET: Titles/Delete/5
+        // GET: Issues/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,30 +148,31 @@ namespace ComicCreator.Controllers
                 return NotFound();
             }
 
-            var title = await _context.Titles
+            var issue = await _context.Issues
+                .Include(i => i.Title)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (title == null)
+            if (issue == null)
             {
                 return NotFound();
             }
 
-            return View(title);
+            return View(issue);
         }
 
-        // POST: Titles/Delete/5
+        // POST: Issues/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var title = await _context.Titles.FindAsync(id);
-            _context.Titles.Remove(title);
+            var issue = await _context.Issues.FindAsync(id);
+            _context.Issues.Remove(issue);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TitleExists(int id)
+        private bool IssueExists(int id)
         {
-            return _context.Titles.Any(e => e.Id == id);
+            return _context.Issues.Any(e => e.Id == id);
         }
     }
 }

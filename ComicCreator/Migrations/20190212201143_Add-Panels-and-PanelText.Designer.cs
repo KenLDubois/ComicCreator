@@ -4,14 +4,16 @@ using ComicCreator.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComicCreator.Migrations
 {
     [DbContext(typeof(ComicCreatorContext))]
-    partial class ComicCreatorContextModelSnapshot : ModelSnapshot
+    [Migration("20190212201143_Add-Panels-and-PanelText")]
+    partial class AddPanelsandPanelText
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +43,7 @@ namespace ComicCreator.Migrations
 
                     b.Property<DateTime?>("ReleaseDate");
 
-                    b.Property<int>("TitleId");
+                    b.Property<int?>("TitleId");
 
                     b.HasKey("Id");
 
@@ -56,7 +58,7 @@ namespace ComicCreator.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("IssueId");
+                    b.Property<int?>("IssueId");
 
                     b.Property<int>("OrderNumber");
 
@@ -126,16 +128,14 @@ namespace ComicCreator.Migrations
                 {
                     b.HasOne("ComicCreator.Models.Title", "Title")
                         .WithMany("Issues")
-                        .HasForeignKey("TitleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("TitleId");
                 });
 
             modelBuilder.Entity("ComicCreator.Models.Panel", b =>
                 {
-                    b.HasOne("ComicCreator.Models.Issue", "Issue")
+                    b.HasOne("ComicCreator.Models.Issue")
                         .WithMany("Panels")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("IssueId");
                 });
 
             modelBuilder.Entity("ComicCreator.Models.PanelText", b =>

@@ -4,14 +4,16 @@ using ComicCreator.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ComicCreator.Migrations
 {
     [DbContext(typeof(ComicCreatorContext))]
-    partial class ComicCreatorContextModelSnapshot : ModelSnapshot
+    [Migration("20190212203035_reqire-titleID-for-panels")]
+    partial class reqiretitleIDforpanels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +58,7 @@ namespace ComicCreator.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("IssueId");
+                    b.Property<int?>("IssueId");
 
                     b.Property<int>("OrderNumber");
 
@@ -132,10 +134,9 @@ namespace ComicCreator.Migrations
 
             modelBuilder.Entity("ComicCreator.Models.Panel", b =>
                 {
-                    b.HasOne("ComicCreator.Models.Issue", "Issue")
+                    b.HasOne("ComicCreator.Models.Issue")
                         .WithMany("Panels")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("IssueId");
                 });
 
             modelBuilder.Entity("ComicCreator.Models.PanelText", b =>
